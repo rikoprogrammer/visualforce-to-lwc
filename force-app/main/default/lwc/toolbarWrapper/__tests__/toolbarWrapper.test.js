@@ -1,5 +1,9 @@
 import { createElement } from 'lwc';
 import ToolbarWrapper from 'c/toolbarWrapper';
+import { recommended } from '@sa11y/preset-rules';
+const { axe, toHaveNoViolations } = require('jest-axe');
+
+expect.extend(toHaveNoViolations);
 
 describe('c-toolbar-wrapper', () => {
     afterEach(() => {
@@ -30,5 +34,16 @@ describe('c-toolbar-wrapper', () => {
         document.body.appendChild(element);
 
         return Promise.resolve().then(() => expect(element).toBeAccessible());
+    });
+
+    it('is accessible by axe', () => {
+        const element = createElement('c-toolbar-wrapper', {
+            is: ToolbarWrapper
+        });
+        document.body.appendChild(element);
+
+        return axe(element, recommended).then((result) =>
+            expect(result).toHaveNoViolations()
+        );
     });
 });
